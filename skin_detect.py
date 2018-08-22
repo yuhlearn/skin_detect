@@ -62,7 +62,7 @@ class SkinDetect:
     filtered_black = weighted > alpha * height * width
     mask = (filtered_black & inverted) * 255
     
-    return cv2.bitwise_not(mask)
+    return mask
     
   @classmethod
   def background_filter(self, img, alpha=0.6, beta=0.8):
@@ -77,7 +77,8 @@ class SkinDetect:
     mask = cv2.Canny(img, lower, upper)
     mask = cv2.dilate(mask, self.kernel, iterations=2)
     mask = cv2.erode(mask, self.kernel, iterations=1)
-    mask = np.bitwise_not(self.fill(np.bitwise_not(self.fill(mask, 0.07)), 0.035))
+    mask = self.fill(mask, 0.07) 
+    mask = self.fill(mask, 0.035) 
     return mask
     
   @classmethod
@@ -106,7 +107,7 @@ class SkinDetect:
     mask = cv2.dilate(mask, self.kernel, iterations=1)
     
     # Remove smaller 'dots' from the mask 
-    mask = np.bitwise_not(self.fill(np.bitwise_not(mask), 0.0001)) 
+    mask = self.fill(np.bitwise_not(mask), 0.0001)
     
     # What's left in the mask is hopefully skin
     height, width, _ = img_bgr.shape
